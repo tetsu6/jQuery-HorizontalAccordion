@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>HorizontalAccordion: jQuery plugin</title>
+<style type="text/css">
+<!--
+body {
+  background-color:#222;
+  text-align:center;
+  color:#FFF;
+  font-size:12px;
+  font-family:"Verdana", "Arial", "Helvetica", "sans-serif";
+ 
+}
+hr {
+  margin:20px;
+  clear:both;
+  border: none;
+  border-top: 1px solid #555;
+  height: 1px;
+}
+/* Common */
+ul, ul li {
+  margin:0;padding:0;
+}
+/* Sample1 */
+ul {
+  margin: 20px auto;
+  overflow:hidden;
+  width:790px;
+  height:640px;
+  background-color:#000;
+  list-style-type:none;
+}
+-->
+</style>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script> 
+<script type="text/javascript" src="jquery-horizontalAccordion.js"></script>
+<script language="javascript">
+
+$(document).ready( function() {
+    $("#testPanel").horizontalAccordion({
+      slit:50,duration:0.3
+    });
+});
+</script> 
+</head>   
+<body>
+
+<h2>サンプル</h2>
+<hr />
+<ul id="testPanel">
+  <li><img src="images/1.jpg" /></li>
+  <li><img src="images/2.jpg" /></li>
+  <li><img src="images/3.jpg" /></li>
+  <li><img src="images/4.jpg" /></li>
+</ul>
+
+<hr />
+Copyright (c) 2011, Matsumoto.JS All rights reserved.
+
+</body>
+</html>

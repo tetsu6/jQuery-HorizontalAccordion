@@ -14,6 +14,7 @@ $(document).ready( function() {
 【パラメータの説明】
 以下の情報を任意に指定します（上記書式を参考に）
     slit: スリットの幅（px）
+    slitSide: スリットの位置（初期値:'left', 'right'）
     startPos: 最初に開いておくパネル（0..）
     duration: スライドの時間を秒で指定（画像の切替え時間）
     interval: 自動切り替えの間隔を秒で指定（初期値:0=再生しない）
@@ -25,6 +26,7 @@ $(document).ready( function() {
     $.fn.horizontalAccordion = function (options) {
         var settings = {
             slit : 20,
+            slitSide : 'left', // or 'right'
             startPos : 0,
             duration : 0.5,
             interval : 0
@@ -36,41 +38,63 @@ $(document).ready( function() {
         var clientWidth = $(this).width();
 	    var lastIndex = 0;
 	    var currentIndex = settings.startPos;
+	    var hovering = false;
+	    var leftOrRight = settings.slitSide;
 	
         var _animateAccordion = function (index) {
-            for (id=0; id<=index; id++) 
+            for (id=0; id<=index; id++) {
+              var cssProp = {};
+              cssProp[leftOrRight] = id*settings.slit+"px";
               $('li.accordion_'+id).animate(
-                  {left: id*settings.slit+"px"}, 
+                  cssProp, 
                   {queue:false, duration:settings.duration}
               );
-            for (id=index+1; id<=lastIndex; id++) 
+            }
+            for (id=index+1; id<=lastIndex; id++) {
+              var cssProp = {};
+              cssProp[leftOrRight] = (clientWidth-(lastIndex-id+1)*settings.slit)+"px";
               $('li.accordion_'+id).animate(
-                  {left: (clientWidth-(lastIndex-id+1)*settings.slit)+"px"}, 
+                  cssProp, 
                   {queue:false, duration:settings.duration}
               );
+            }
         };
 
         var _autoplayEvent = function () {
+        	if (hovering) return;
             currentIndex = currentIndex + 1;
             if (currentIndex > lastIndex) currentIndex = 0;
             _animateAccordion(currentIndex);
         }
+        
+        var _mouseOverEvent = function(i) {
+            hovering = true;
+	        currentIndex=i;
+	        _animateAccordion(i);
+        }
+        var _mouseOutEvent = function() {
+            hovering = false;
+        }
 
         //Initialize
         if ($(this).css('position') === 'static') $(this).css('position','relative');
+        lastIndex = $(this).find('li').size() - 1;
         $(this).find('li').each(function(i){
             if ($(this).css('position') === 'static') $(this).css('position','absolute');
             $(this).css('display','block');
-	        lastIndex = i;
 	        $(this).addClass('accordion_'+i);
             //Animate to default position
 	        var time = (lastIndex - i) * settings.duration / 2;
+
 	        setTimeout(
               function(){ 
-                  var leftPos = clientWidth-(lastIndex-i+1)*settings.slit;
+                  var leftPos = 0;
+                  leftPos = clientWidth-(lastIndex-i+1)*settings.slit;
                   if (i<=settings.startPos) leftPos = i*settings.slit;
+                  var cssProp = {};
+                  cssProp[leftOrRight] = leftPos+"px";
                   $('li.accordion_'+i).animate(
-                      {left: leftPos+"px"},
+                      cssProp,
                       {queue:false, duration:settings.duration}
                   );
               }, time
@@ -79,7 +103,7 @@ $(document).ready( function() {
         
         //Add event listener
         $(this).find('li').each(function(i){
-	        $(this).hover(function(){ currentIndex=i; _animateAccordion(i); });
+	        $(this).hover(function(){_mouseOverEvent(i);},_mouseOutEvent);
         });
 		
         if (settings.interval > 0) setInterval(_autoplayEvent, settings.interval);
